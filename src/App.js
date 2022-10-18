@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import Weather from "./components/weather";
 
 function App() {
+  const [position, setPosition] = useState({ lat: null, lng: null });
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setLoading(false);
+      },
+      (error) => {
+        alert(error);
+      }
+    );
+  }, []);
+
+  if (isLoading) {
+    return <h3>Loading...</h3>;
+  }
+
+  //jos sijaintitietoja ei saada, eli ovat vielä null, näytetään Loading...
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Weather lat={position.lat} lng={position.lng} />
+    </>
   );
 }
-
 export default App;
